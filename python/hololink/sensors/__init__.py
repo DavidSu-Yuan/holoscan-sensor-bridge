@@ -26,6 +26,7 @@ _MODULES = [
 
 _OBJECTS = {
     "LinuxCamera": "linux_camera",
+    "HDMISource": "hdmi_source",
 }
 
 __all__ = [

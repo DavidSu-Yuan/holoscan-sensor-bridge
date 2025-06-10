@@ -48,6 +48,7 @@ setuptools.setup(
         "hololink/native",
         "hololink/operators",
         "hololink/sensors",
+        "hololink/sensors/hdmi_source",
         "hololink/sensors/imx274",
         "tools",
     ],

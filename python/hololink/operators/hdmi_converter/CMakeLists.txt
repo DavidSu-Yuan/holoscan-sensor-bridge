@@ -13,29 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(native)
-add_subdirectory(operators)
-add_subdirectory(sensors)
+include(pybind11_add_hololink_module)
 
-add_library(hololink STATIC
-  data_channel.cpp
-  enumerator.cpp
-  hololink.cpp
-  logging.cpp
-  metadata.cpp
-  timeout.cpp
-  )
-
-set_property(TARGET hololink PROPERTY POSITION_INDEPENDENT_CODE ON)
-
-target_include_directories(hololink
-  INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
-    $<INSTALL_INTERFACE:src>
-  )
-
-target_link_libraries(hololink
-  PRIVATE
-    hololink::native
-    holoscan::core
-  )
+pybind11_add_hololink_module(
+    CPP_CMAKE_TARGET hdmi_converter
+    CLASS_NAME "HDMIConverterOp"
+    IMPORT "import holoscan.core"
+    SOURCES hdmi_converter.cpp
+)

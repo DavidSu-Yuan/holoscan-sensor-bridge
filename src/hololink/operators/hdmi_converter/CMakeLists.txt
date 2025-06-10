@@ -13,29 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_subdirectory(native)
-add_subdirectory(operators)
-add_subdirectory(sensors)
+# we don't expose the C++ interface of the operator yet, therfore link
+# statically
+add_library(hdmi_converter_lib STATIC IMPORTED)
+set_target_properties(hdmi_converter_lib PROPERTIES
+  IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libhdmi_converter.a"
+)
 
-add_library(hololink STATIC
-  data_channel.cpp
-  enumerator.cpp
-  hololink.cpp
-  logging.cpp
-  metadata.cpp
-  timeout.cpp
-  )
+add_library(hdmi_converter INTERFACE)
+target_link_libraries(hdmi_converter INTERFACE hdmi_converter_lib)
+add_library(hololink::operators::hdmi_converter ALIAS hdmi_converter)
 
-set_property(TARGET hololink PROPERTY POSITION_INDEPENDENT_CODE ON)
-
-target_include_directories(hololink
+target_include_directories(hdmi_converter
   INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../..>
     $<INSTALL_INTERFACE:src>
   )
 
-target_link_libraries(hololink
-  PRIVATE
+target_link_libraries(hdmi_converter
+  INTERFACE
     hololink::native
     holoscan::core
+    CUDA::nppidei
+    CUDA::nppicc
   )
+
