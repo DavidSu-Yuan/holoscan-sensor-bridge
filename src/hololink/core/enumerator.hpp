@@ -42,6 +42,10 @@ const std::string HOLOLINK_100G_UUID = "7a377bf7-76cb-4756-a4c5-7dddaed8354b";
 const std::string MICROCHIP_POLARFIRE_UUID = "ed6a9292-debf-40ac-b603-a24e025309c1";
 const std::string LEOPARD_EAGLE_UUID = "f1627640-b4dc-48af-a360-c55b09b3d230";
 
+const std::string YUAN_HSB_HDMI_SDI12G_UUID = "a0590d91-6c25-4709-89e5-98d0d3ec27cf";
+const std::string YUAN_HSB_CV850_UUID  = "683ad239-8f80-4c7f-913a-39daec2f47bc";
+const std::string YUAN_HSB_MULTI_UUID = "248d8314-c7fd-4ce5-b8d8-17c2b819ad51";
+
 /**
  * Strategy that adjusts enumeration data based on FPGA UUID.
  */

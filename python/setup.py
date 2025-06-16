@@ -49,6 +49,7 @@ setuptools.setup(
         "hololink/emulation",
         "hololink/operators",
         "hololink/sensors",
+        "hololink/sensors/hdmi_source",
         "hololink/sensors/camera",
         "hololink/sensors/camera/imx274",
         "hololink/sensors/imx274",

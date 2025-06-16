@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,34 +15,21 @@
 
 # we don't expose the C++ interface of the operator yet, therefore link
 # statically
+add_library(hdmi_source STATIC
+  hdmi_source.cpp
+  )
 
-add_library(hololink_sensor STATIC
-  li_i2c_expander.cpp
-)
+set_property(TARGET hdmi_source PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-set_property(TARGET hololink_sensor PROPERTY POSITION_INDEPENDENT_CODE ON)
+add_library(hololink::sensors::hdmi_source ALIAS hdmi_source)
 
-add_library(hololink::sensor ALIAS hololink_sensor)
-
-target_include_directories(hololink_sensor
+target_include_directories(hdmi_source
   INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../..>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../../>
     $<INSTALL_INTERFACE:src>
-)
+  )
 
-target_link_libraries(hololink_sensor
+target_link_libraries(hdmi_source
   PUBLIC
-    fmt
-    hololink::core
-)
-
-target_compile_definitions(hololink_sensor
-  PRIVATE
-    FMT_HEADER_ONLY=1
-)
-
-# ------------------------------------------------------------------------------
-
-# Add sensor implementation subdirectories
-add_subdirectory(camera)
-add_subdirectory(hdmi_source)
+    hololink::sensor
+  )
