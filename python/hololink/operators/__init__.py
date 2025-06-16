@@ -23,6 +23,7 @@ _MODULES = {
     "AudioPacketizerOp": "audio_packetizer",
     "BaseReceiverOp": "base_receiver_op",
     "CsiToBayerOp": "csi_to_bayer",
+    "HDMIConverterOp": "hdmi_converter",
     "ImageProcessorOp": "image_processor",
     "ImageShiftToUint8Operator": "image_shift_to_uint8_operator",
     "IQDecoderOp": "iq_dec",

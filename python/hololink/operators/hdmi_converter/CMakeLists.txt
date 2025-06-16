@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,9 @@
 
 include(pybind11_add_hololink_module)
 
-add_subdirectory(camera)
-add_subdirectory(hdmi_source)
-
 pybind11_add_hololink_module(
-    CPP_CMAKE_TARGET hololink_sensor
-    CLASS_NAME "Sensor"
-    SOURCES sensors.cpp
+    CPP_CMAKE_TARGET hdmi_converter
+    CLASS_NAME "HDMIConverterOp"
+    IMPORT "import holoscan.core"
+    SOURCES hdmi_converter.cpp
 )

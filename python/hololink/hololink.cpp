@@ -272,7 +272,8 @@ PYBIND11_MODULE(_hololink, m)
     py::enum_<hololink::csi::PixelFormat>(m, "PixelFormat")
         .value("RAW_8", hololink::csi::PixelFormat::RAW_8, R"pbdoc(RAW 8-bit)pbdoc")
         .value("RAW_10", hololink::csi::PixelFormat::RAW_10, R"pbdoc(RAW 10-bit)pbdoc")
-        .value("RAW_12", hololink::csi::PixelFormat::RAW_12, R"pbdoc(RAW 12-bit)pbdoc");
+        .value("RAW_12", hololink::csi::PixelFormat::RAW_12, R"pbdoc(RAW 12-bit)pbdoc")
+        .value("YUYV_8", hololink::csi::PixelFormat::YUYV_8, R"pbdoc(YUYV 8-bit)pbdoc");
 
     // Bind BayerFormat enum
     py::enum_<hololink::csi::BayerFormat>(m, "BayerFormat")
