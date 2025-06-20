@@ -31,6 +31,7 @@ class HoloscanApplication(holoscan.core.Application):
         self,
         headless,
         fullscreen,
+        convert_3d,
         cuda_context,
         cuda_device_ordinal,
         hololink_channel,
@@ -43,6 +44,7 @@ class HoloscanApplication(holoscan.core.Application):
         super().__init__()
         self._headless = headless
         self._fullscreen = fullscreen
+        self._convert_3d = convert_3d
         self._cuda_context = cuda_context
         self._cuda_device_ordinal = cuda_device_ordinal
         self._hololink_channel = hololink_channel
@@ -82,14 +84,23 @@ class HoloscanApplication(holoscan.core.Application):
             block_size=self._camera._width*3
             * ctypes.sizeof(ctypes.c_uint8)
             * self._camera._height,
-            num_blocks=4,
+            num_blocks=9, # for 3d convert need more buffer
         )
-        hdmi_converter_operator = hololink_module.operators.HDMIConverterOp(
-            self,
-            name="hdmi_converter",
-            allocator=hdmi_converter_pool,
-            cuda_device_ordinal=self._cuda_device_ordinal,
-        )
+
+        if self._convert_3d == 0: # No 3D format convert
+            hdmi_converter_operator = hololink_module.operators.HDMIConverterOp(
+                self,
+                name="hdmi_converter",
+                allocator=hdmi_converter_pool,
+                cuda_device_ordinal=self._cuda_device_ordinal)
+        elif self._convert_3d == 1: # Convert from line_by_line to side_by_side_half
+            hdmi_converter_operator = hololink_module.operators.HDMIConverterOp(
+                self,
+                name="hdmi_converter",
+                allocator=hdmi_converter_pool,
+                cuda_device_ordinal=self._cuda_device_ordinal,
+                input_3d_format=hololink_module.operators.HDMIConverterOp.Video3DFormat.LINE_BY_LINE,
+                output_3d_format=hololink_module.operators.HDMIConverterOp.Video3DFormat.SIDE_BY_SIDE_HALF)
         self._camera.configure_converter(hdmi_converter_operator)
 
         frame_size = hdmi_converter_operator.get_csi_length()
@@ -106,14 +117,16 @@ class HoloscanApplication(holoscan.core.Application):
             hololink_channel=self._hololink_channel,
             device=self._camera,
         )
+
         visualizer_args = self.kwargs("holoviz")
         visualizer = holoscan.operators.HolovizOp(
-            self,
-            name="holoviz",
-            fullscreen=self._fullscreen,
-            headless=self._headless,
-            **visualizer_args,
-        )
+                self,
+                name="holoviz",
+                fullscreen=self._fullscreen,
+                headless=self._headless,
+                vsync=True,
+                **visualizer_args,
+                )
 
         self.add_flow(receiver_operator, hdmi_converter_operator, {("output", "input")})
         self.add_flow(hdmi_converter_operator, visualizer, {("output", "receivers")})
@@ -142,6 +155,12 @@ def main():
         "--hololink",
         default="192.168.0.2",
         help="IP address of Hololink board",
+    )
+    parser.add_argument(
+        "--convert-3d",
+        type=int,
+        default=0,
+        help="Convert Line By Line to Side By Side",
     )
     parser.add_argument(
         "--log-level",
@@ -198,6 +217,7 @@ def main():
     application = HoloscanApplication(
         args.headless,
         args.fullscreen,
+        args.convert_3d,
         cu_context,
         cu_device_ordinal,
         hololink_channel,

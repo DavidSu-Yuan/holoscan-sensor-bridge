@@ -43,12 +43,13 @@ namespace {
 class HoloscanApplication : public holoscan::Application {
 public:
     explicit HoloscanApplication(bool headless, bool fullscreen, CUcontext cuda_context,
-        int cuda_device_ordinal, hololink::DataChannel& hololink_channel,
+        int cuda_device_ordinal, hololink::DataChannel& hololink_channel, int convert_3d,
         const std::string& ibv_name, uint32_t ibv_port, std::shared_ptr<hololink::sensors::HDMISource>& hdmi, int64_t frame_limit)
         : headless_(headless)
         , fullscreen_(fullscreen)
         , cuda_context_(cuda_context)
         , cuda_device_ordinal_(cuda_device_ordinal)
+        , convert_3d_(convert_3d)
         , hololink_channel_(hololink_channel)
         , ibv_name_(ibv_name)
         , ibv_port_(ibv_port)
@@ -81,11 +82,21 @@ public:
             // storage_type of 1 is device memory
             1, // storage_type
             hdmi_->width() * hdmi_->height() * sizeof(uint8_t) * 3, // block_size
-            4 // num_blocks
+            9 // num_blocks
         );
-        auto hdmi_converter_op = make_operator<hololink::operators::HDMIConverterOp>(
-            "hdmi_converter", holoscan::Arg("allocator", hdmi_converter_pool),
-            holoscan::Arg("cuda_device_ordinal", cuda_device_ordinal_));
+
+        std::shared_ptr<hololink::operators::HDMIConverterOp> hdmi_converter_op = nullptr;
+        if (convert_3d_ == 0) {
+            hdmi_converter_op = make_operator<hololink::operators::HDMIConverterOp>(
+                    "hdmi_converter", holoscan::Arg("allocator", hdmi_converter_pool),
+                    holoscan::Arg("cuda_device_ordinal", cuda_device_ordinal_));
+        } else {
+            hdmi_converter_op = make_operator<hololink::operators::HDMIConverterOp>(
+                "hdmi_converter", holoscan::Arg("allocator", hdmi_converter_pool),
+                holoscan::Arg("cuda_device_ordinal", cuda_device_ordinal_),
+                holoscan::Arg("input_3d_format", int(hololink::operators::HDMIConverterOp::Video3DFormat::LINE_BY_LINE)),
+                holoscan::Arg("output_3d_format", int(hololink::operators::HDMIConverterOp::Video3DFormat::SIDE_BY_SIDE_HALF)));
+        }
         std::shared_ptr<hololink::csi::CsiConverter> csi_converter = hdmi_converter_op;
         hdmi_->configure_converter(csi_converter);
 
@@ -115,6 +126,7 @@ private:
     const bool fullscreen_;
     const CUcontext cuda_context_;
     const int cuda_device_ordinal_;
+    const int convert_3d_;
     hololink::DataChannel& hololink_channel_;
     const std::string ibv_name_;
     const uint32_t ibv_port_;
@@ -129,6 +141,7 @@ int main(int argc, char** argv)
     bool headless = false;
     bool fullscreen = false;
     int64_t frame_limit = 0;
+    int convert_3d = 0;
     std::string configuration;
     std::string hololink_ip = "192.168.0.2";
     holoscan::LogLevel log_level = holoscan::LogLevel::INFO;
@@ -154,6 +167,7 @@ int main(int argc, char** argv)
         { "help", no_argument, nullptr, 'h' },
         { "headless", no_argument, nullptr, 0 },
         { "fullscreen", no_argument, nullptr, 0 },
+        { "convert-3d", required_argument, nullptr, 0 },
         { "frame-limit", required_argument, nullptr, 0 },
         { "configuration", required_argument, nullptr, 0 },
         { "hololink", required_argument, nullptr, 0 },
@@ -183,6 +197,8 @@ int main(int argc, char** argv)
                 configuration = argument;
             } else if (cur_option->name == std::string("hololink")) {
                 hololink_ip = argument;
+            } else if (cur_option->name == std::string("convert-3d")) {
+                convert_3d = std::stoul(argument);
             } else if (cur_option->name == std::string("log-level")) {
                 if ((argument == "trace") || (argument == "TRACE")) {
                     log_level = holoscan::LogLevel::TRACE;
@@ -282,7 +298,7 @@ int main(int argc, char** argv)
         std::shared_ptr<hololink::sensors::HDMISource> hdmi = std::make_shared<hololink::sensors::HDMISource>(&hololink_channel);
         // Set up the application
         auto application = holoscan::make_application<HoloscanApplication>(headless, fullscreen,
-            cu_context, cu_device_ordinal, hololink_channel, ibv_name, ibv_port, hdmi, frame_limit);
+            cu_context, cu_device_ordinal, hololink_channel, convert_3d, ibv_name, ibv_port, hdmi, frame_limit);
         application->config(configuration);
 
         // Run it.

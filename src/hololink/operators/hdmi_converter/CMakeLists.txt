@@ -34,8 +34,9 @@ target_link_libraries(hdmi_converter
   INTERFACE
     hololink
     holoscan::core
-    CUDA::nppidei
+    CUDA::nppig
     CUDA::nppicc
+    CUDA::nppidei
   )
 
 # Installation of the hdmi_converter operator
