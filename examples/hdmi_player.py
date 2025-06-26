@@ -101,6 +101,14 @@ class HoloscanApplication(holoscan.core.Application):
                 cuda_device_ordinal=self._cuda_device_ordinal,
                 input_3d_format=hololink_module.operators.HDMIConverterOp.Video3DFormat.LINE_BY_LINE,
                 output_3d_format=hololink_module.operators.HDMIConverterOp.Video3DFormat.SIDE_BY_SIDE_HALF)
+        elif self._convert_3d == 2: # Convert from line_by_line to side_by_side_half
+            hdmi_converter_operator = hololink_module.operators.HDMIConverterOp(
+                self,
+                name="hdmi_converter",
+                allocator=hdmi_converter_pool,
+                cuda_device_ordinal=self._cuda_device_ordinal,
+                input_3d_format=hololink_module.operators.HDMIConverterOp.Video3DFormat.LINE_BY_LINE,
+                output_3d_format=hololink_module.operators.HDMIConverterOp.Video3DFormat.TOP_AND_BOTTOM)
         self._camera.configure_converter(hdmi_converter_operator)
 
         frame_size = hdmi_converter_operator.get_csi_length()

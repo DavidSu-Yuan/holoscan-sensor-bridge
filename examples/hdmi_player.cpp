@@ -90,12 +90,18 @@ public:
             hdmi_converter_op = make_operator<hololink::operators::HDMIConverterOp>(
                     "hdmi_converter", holoscan::Arg("allocator", hdmi_converter_pool),
                     holoscan::Arg("cuda_device_ordinal", cuda_device_ordinal_));
-        } else {
+        } else if (convert_3d_ == 1 ) { // convert line-by-line to side-by-side-half
             hdmi_converter_op = make_operator<hololink::operators::HDMIConverterOp>(
                 "hdmi_converter", holoscan::Arg("allocator", hdmi_converter_pool),
                 holoscan::Arg("cuda_device_ordinal", cuda_device_ordinal_),
                 holoscan::Arg("input_3d_format", int(hololink::operators::HDMIConverterOp::Video3DFormat::LINE_BY_LINE)),
                 holoscan::Arg("output_3d_format", int(hololink::operators::HDMIConverterOp::Video3DFormat::SIDE_BY_SIDE_HALF)));
+        } else if (convert_3d_ == 2 ) { // convert line-by-line to top-and-bottom
+            hdmi_converter_op = make_operator<hololink::operators::HDMIConverterOp>(
+                "hdmi_converter", holoscan::Arg("allocator", hdmi_converter_pool),
+                holoscan::Arg("cuda_device_ordinal", cuda_device_ordinal_),
+                holoscan::Arg("input_3d_format", int(hololink::operators::HDMIConverterOp::Video3DFormat::LINE_BY_LINE)),
+                holoscan::Arg("output_3d_format", int(hololink::operators::HDMIConverterOp::Video3DFormat::TOP_AND_BOTTOM)));
         }
         std::shared_ptr<hololink::csi::CsiConverter> csi_converter = hdmi_converter_op;
         hdmi_->configure_converter(csi_converter);
