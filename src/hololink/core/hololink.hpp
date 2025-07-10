@@ -127,6 +127,8 @@ const std::string HOLOLINK_100G_UUID = "7a377bf7-76cb-4756-a4c5-7dddaed8354b";
 const std::string MICROCHIP_POLARFIRE_UUID = "ed6a9292-debf-40ac-b603-a24e025309c1";
 const std::string LEOPARD_EAGLE_UUID = "f1627640-b4dc-48af-a360-c55b09b3d230";
 
+const std::string YUAN_HSB_UUID = "a0590d91-6c25-4709-89e5-98d0d3ec27cf";
+
 // Other constants
 constexpr uint32_t METADATA_SIZE = 128;
 constexpr double APB_TIMEOUT_SCALE = 1.0 / 51.2e-9;

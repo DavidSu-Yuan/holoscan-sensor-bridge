@@ -384,6 +384,8 @@ void DataChannel::configure_socket(int socket_fd)
         || uuid == HOLOLINK_100G_UUID
         || uuid == MICROCHIP_POLARFIRE_UUID) {
         sensor_map = &sensor_map_default;
+    } else if (uuid == YUAN_HSB_UUID) {
+        sensor_map = &sensor_map_default;
     } else if (uuid == LEOPARD_EAGLE_UUID) {
         sensor_map = &sensor_map_leopard_eagle;
     } else {
