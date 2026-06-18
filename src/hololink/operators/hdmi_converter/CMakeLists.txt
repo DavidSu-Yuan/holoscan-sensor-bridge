@@ -13,33 +13,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-add_library(linux_receiver STATIC
-  linux_receiver.cpp
-  linux_receiver_op.cpp
-  )
+# we don't expose the C++ interface of the operator yet, therfore link
+# statically
+add_library(hdmi_converter_lib STATIC IMPORTED)
+set_target_properties(hdmi_converter_lib PROPERTIES
+  IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/libhdmi_converter.a"
+)
 
-set_property(TARGET linux_receiver PROPERTY POSITION_INDEPENDENT_CODE ON)
+add_library(hdmi_converter INTERFACE)
+target_link_libraries(hdmi_converter INTERFACE hdmi_converter_lib)
 
-add_library(hololink::operators::linux_receiver ALIAS linux_receiver)
+add_library(hololink::operators::hdmi_converter ALIAS hdmi_converter)
 
-target_include_directories(linux_receiver
+target_include_directories(hdmi_converter
   INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../..>
     $<INSTALL_INTERFACE:src>
   )
 
-target_link_libraries(linux_receiver
-  PRIVATE
-    hololink::core
-    hololink::operators::base_receiver_op
-    CUDA::cuda_driver
+target_link_libraries(hdmi_converter
+  INTERFACE
+    hololink
+    holoscan::core
+    CUDA::nppig
+    CUDA::nppicc
+    CUDA::nppidei
   )
 
-# Installation of the linux_receiver operator
-install(TARGETS linux_receiver
+# Installation of the hdmi_converter operator
+install(TARGETS hdmi_converter
         DESTINATION ${CMAKE_INSTALL_LIBDIR}
         COMPONENT hololink-operators)
 
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/linux_receiver_op.hpp
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/operators/linux_receiver
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/hdmi_converter.hpp
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/operators/hdmi_converter
         COMPONENT hololink-operators)

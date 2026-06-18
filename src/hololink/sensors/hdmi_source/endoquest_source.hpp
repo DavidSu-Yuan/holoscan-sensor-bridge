@@ -1,0 +1,54 @@
+#ifndef SRC_SENSORS_HDMI_SOURCE_EndoQuest_SOURCE
+#define SRC_SENSORS_HDMI_SOURCE_EndoQuest_SOURCE
+
+#include <memory>
+
+#include <hololink/core/csi_controller.hpp>
+#include <hololink/core/csi_formats.hpp>
+#include <hololink/core/hololink.hpp>
+#include <hololink/core/timeout.hpp>
+
+namespace hololink::sensors {
+
+class EndoQuestSource {
+public:
+    constexpr static uint32_t VERSION = 1;
+    constexpr static uint32_t CAM_I2C_ADDRESS = 0b00110010;
+    EndoQuestSource(hololink::DataChannel* hololink_channel,
+        uint32_t i2c_controller_bus = hololink::BL_I2C_BUS, bool disable_i2c = false);
+    void setup_clock();
+    void start();
+    void stop();
+    int get_version();
+    int get_register(uint32_t register_addr);
+    void set_register(uint32_t register_addr, uint32_t value,
+            std::shared_ptr<Timeout> timeout = std::shared_ptr<Timeout>());
+    void configure_converter(std::shared_ptr<hololink::csi::CsiConverter> converter);
+    uint32_t width() const { return width_; }
+    void set_width(uint32_t w) { width_ = w; }
+    uint32_t height() const { return height_; }
+    void set_height(uint32_t w) { height_ = w; }
+
+    hololink::csi::PixelFormat get_pixel_format() const;
+    hololink::csi::BayerFormat get_bayer_format() const;
+
+private:
+    uint32_t width_ = 1920;
+    uint32_t height_ = 1080;
+    uint32_t video_width_ = 1920;
+    uint32_t video_height_ = 1080;
+    uint32_t video_frame_rate_ = 60;
+    bool running_ = false;
+    bool disable_i2c_ = false;
+
+    DataChannel* hololink_channel_ = nullptr;
+    std::shared_ptr<hololink::Hololink> hololink_ = nullptr;
+    std::shared_ptr<hololink::Hololink::I2c> i2c_ = nullptr;
+
+    hololink::csi::PixelFormat pixel_format_;
+    hololink::csi::BayerFormat bayer_format_;
+};
+
+} // namespace hololink::sensors
+
+#endif /* SRC_SENSORS_HDMI_SOURCE_EndoQuest_SOURCE */

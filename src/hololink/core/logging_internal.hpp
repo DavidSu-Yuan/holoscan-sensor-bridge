@@ -70,7 +70,7 @@ template <typename FormatT, typename... ArgsT>
 static inline void hsb_log_fmt(char const* file, unsigned line, const char* function, HsbLogLevel level, const FormatT& format, ArgsT&&... args)
 {
     if (level >= hsb_log_level) {
-        auto fmt_args = fmt::make_format_args<fmt::buffer_context<fmt::char_t<FormatT>>>(args...);
+        auto fmt_args = fmt::make_format_args(args...);
         hsb_logger(file, line, function, level, fmt::vformat(format, fmt_args).c_str());
     }
 }

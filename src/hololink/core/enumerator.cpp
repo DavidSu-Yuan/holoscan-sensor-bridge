@@ -755,7 +755,11 @@ void Enumerator::configure_default_enumeration_strategies()
     Metadata hololink_lite_metadata;
     hololink_lite_metadata["board_description"] = "hololink-lite";
     hololink_lite_metadata["gpio_pin_count"] = 16;
-    auto hololink_lite_enumeration_strategy = std::make_shared<BasicEnumerationStrategy>(hololink_lite_metadata);
+    unsigned hololink_lite_total_sensors = 8;
+    unsigned hololink_lite_total_dataplanes = 2;
+    unsigned hololink_lite_sifs_per_sensor = 1;
+    auto hololink_lite_enumeration_strategy = std::make_shared<BasicEnumerationStrategy>(hololink_lite_metadata,
+            hololink_lite_total_sensors, hololink_lite_total_dataplanes, hololink_lite_sifs_per_sensor);
     uuid_strategies_[HOLOLINK_LITE_UUID] = hololink_lite_enumeration_strategy;
 
     Metadata hololink_nano_metadata;
@@ -782,6 +786,23 @@ void Enumerator::configure_default_enumeration_strategies()
     auto leopard_eagle_enumeration_strategy = std::make_shared<LeopardEagleEnumerationStrategy>();
     uuid_strategies_[LEOPARD_EAGLE_UUID] = leopard_eagle_enumeration_strategy;
 
+    Metadata yuan_hsb_hdmi_sdi12g_metadata;
+    yuan_hsb_hdmi_sdi12g_metadata["board_description"] = "YUAN HDMI and SDI 12G HSB";
+    yuan_hsb_hdmi_sdi12g_metadata["gpio_pin_count"] = 16;
+    auto yuan_hsb_hdmi_sdi12g_enumeration_strategy = std::make_shared<BasicEnumerationStrategy>(yuan_hsb_hdmi_sdi12g_metadata);
+    uuid_strategies_[YUAN_HSB_HDMI_SDI12G_UUID] = yuan_hsb_hdmi_sdi12g_enumeration_strategy;
+
+    Metadata yuan_hsb_cv850_metadata;
+    yuan_hsb_cv850_metadata["board_description"] = "YUAN CV850 HSB";
+    yuan_hsb_cv850_metadata["gpio_pin_count"] = 16;
+    auto yuan_hsb_cv850_enumeration_strategy = std::make_shared<BasicEnumerationStrategy>(yuan_hsb_cv850_metadata);
+    uuid_strategies_[YUAN_HSB_CV850_UUID] = yuan_hsb_cv850_enumeration_strategy;
+
+    Metadata yuan_hsb_multi_metadata;
+    yuan_hsb_multi_metadata["board_description"] = "YUAN Multi HSB";
+    yuan_hsb_multi_metadata["gpio_pin_count"] = 16;
+    auto yuan_hsb_multi_enumeration_strategy = std::make_shared<BasicEnumerationStrategy>(yuan_hsb_multi_metadata);
+    uuid_strategies_[YUAN_HSB_MULTI_UUID] = yuan_hsb_multi_enumeration_strategy;
     done = true;
 }
 

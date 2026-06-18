@@ -31,6 +31,10 @@ enum class PixelFormat {
     RAW_10 = 1,
     /** 12 bits per pixel; arranged as 3 bytes representing 2 pixels. */
     RAW_12 = 2,
+    /** 16 bits per pixel; arranged as 2 bytes representing 1 pixels. */
+    RAW_16 = 3,
+    /** 8 bits per pixel; YUY2. */
+    YUYV_8 = 4,
 };
 
 // Bayer Format Enum

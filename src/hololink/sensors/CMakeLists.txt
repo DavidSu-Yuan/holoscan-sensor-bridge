@@ -45,3 +45,4 @@ target_compile_definitions(hololink_sensor
 
 # Add sensor implementation subdirectories
 add_subdirectory(camera)
+add_subdirectory(hdmi_source)

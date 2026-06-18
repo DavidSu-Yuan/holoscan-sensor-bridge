@@ -19,6 +19,13 @@ add_executable(imx274_player
   imx274_player.cpp
   )
 
+add_executable(hdmi_player
+  hdmi_player.cpp
+  )
+add_executable(linux_hdmi_player
+  linux_hdmi_player.cpp
+  )
+
 add_test(NAME imx274_player_test
           COMMAND imx274_player --frame-limit=10 --headless
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
@@ -75,6 +82,27 @@ target_link_libraries(single_network_stereo_vb1940_player
   )
 
 list(APPEND EXAMPLE_INSTALL_TARGETS single_network_stereo_vb1940_player)
+
+target_link_libraries(hdmi_player
+  PRIVATE
+    hololink
+    hololink::operators::hdmi_converter
+    hololink::operators::roce_receiver
+    hololink::sensors::hdmi_source
+    holoscan::core
+    holoscan::ops::holoviz
+    pybind11::embed
+  )
+
+target_link_libraries(linux_hdmi_player
+  PRIVATE
+    hololink
+    hololink::operators::hdmi_converter
+    hololink::operators::linux_receiver
+    hololink::sensors::hdmi_source
+    holoscan::core
+    holoscan::ops::holoviz
+  )
 
 # Signal Generator sample app
 add_executable(signal_generator
